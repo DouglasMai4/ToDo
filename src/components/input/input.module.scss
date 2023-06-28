@@ -1,0 +1,32 @@
+@import '../../assets/colors.scss';
+
+.label {
+  display: inline-flex;
+  font-size: 1.6rem;
+  gap: 1rem;
+  background-color: $bg-color;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  outline: 1px dashed transparent;
+  outline-offset: 2px;
+  transition: outline 300ms ease;
+  width: 100%;
+
+  &:has(.input:focus) {
+    outline-color: $c-secondary;
+  }
+
+  .labelText {
+    width: 10rem;
+  }
+  
+  .input {
+    font-size: 1.6rem;
+    background-color: transparent;
+    color: $c-text;
+    border: none;
+    outline: none;
+    caret-color: $c-primary;
+    width: 100%;
+  }
+}
