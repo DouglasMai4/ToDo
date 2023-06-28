@@ -1,41 +1,67 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
-import { Link } from "react-router-dom";
+import { Link, redirect } from "react-router-dom";
+
+import { supabase } from '../../supabaseClient';
 
 import Input from '../../components/input';
 
 import styles from './login.module.scss';
 
 export default function Login() {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState({
-    username: '',
+    email: '',
     password: '',
+    login: '',
   });
+
+  const signIn = async () => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (!data.user || error) {
+        setErrorMsg((prev) => ({
+          ...prev,
+          login: 'Não foi possível entrar, por favor verifique seu email ou tente novamente mais tarde',
+        }));
+      }
+
+      return redirect('/');
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     
-    if (!username) {
-      setErrorMsg({
-        username: 'Usuário é obrigatório!',
-        password: '',
-      });
+    if (!email) {
+      setErrorMsg((prev) => ({
+        ...prev,
+        email: 'Email é obrigatório!',
+      }));
       return;
     }
 
     if (password.length < 6) {
-      setErrorMsg({
-        username: '',
+      setErrorMsg((prev) => ({
+        ...prev,
         password: 'A senha deve ter o tamanho de >= 6!',
-      });
+      }));
       return;
     }
 
     setErrorMsg({
-      username: '',
+      email: '',
       password: '',
+      login: '',
     });
+
+    signIn();
   }
 
   return (
@@ -47,17 +73,17 @@ export default function Login() {
         <h1>Login</h1>
 
         <Input
-          id="username"
-          type="text"
-          label="Usuário"
-          placeholder="DouglasMai4"
-          value={ username }
+          id="email"
+          type="email"
+          label="Email"
+          placeholder="exemplo@email.com"
+          value={ email }
           handleInput={ (e: ChangeEvent<HTMLInputElement>) => {
-            setUsername(e.currentTarget.value);
+            setEmail(e.currentTarget.value);
           }}
         />
-        {errorMsg.username && (
-          <span className={ styles.errorMsg }>{errorMsg.username}</span>
+        {errorMsg.email && (
+          <span className={ styles.errorMsg }>{errorMsg.email}</span>
         )}
 
         <Input
@@ -81,6 +107,10 @@ export default function Login() {
         >
           Entrar
         </button>
+
+        {errorMsg.login && (
+          <span className={ styles.errorMsg }>{errorMsg.login}</span>
+        )}
       </form>
 
       <section className={styles.container}>
