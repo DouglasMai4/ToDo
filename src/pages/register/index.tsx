@@ -1,11 +1,11 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 import Input from '../../components/input';
 
-import styles from './login.module.scss';
+import styles from './register.module.scss';
 
-export default function Login() {
+export default function Register() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState({
@@ -44,7 +44,7 @@ export default function Login() {
         className={styles.form}
         onSubmit={handleSubmit}
       >
-        <h1>Login</h1>
+        <h1>Cadastrar</h1>
 
         <Input
           id="username"
@@ -79,13 +79,13 @@ export default function Login() {
           type="submit"
           className={styles.button}
         >
-          Entrar
+          Registrar
         </button>
       </form>
 
       <section className={styles.container}>
-        Não possuí uma conta?
-        Sem problemas <Link to="/register">Clique Aqui</Link> e crie sua conta!
+        Já possuí uma conta?
+        Então <Link to="/login">Clique Aqui</Link> faça login!
       </section>
     </>
   )
