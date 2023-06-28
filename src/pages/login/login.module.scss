@@ -17,4 +17,11 @@
     background-color: $c-secondary;
     color: $bg-color;
   }
+
+  .errorMsg {
+    background-color: $c-error;
+    padding: 0.1rem;
+    border-radius: 0.5rem;
+    text-align: center;
+  }
 }
