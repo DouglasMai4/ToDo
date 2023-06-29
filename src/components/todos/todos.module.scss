@@ -1,0 +1,32 @@
+@import '../../assets/colors.scss';
+
+.container {
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  background-color: $bg-color-s;
+  border: 1px solid $c-primary;
+  margin: 1rem;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    button {
+      width: 100%;
+      font-size: 1.5em;
+      border: none;
+      background-color: $c-secondary;
+      color: $bg-color;
+      border-radius: 0.5rem;
+    }
+  }
+
+  .errorMsg {
+    background-color: $c-error;
+    padding: 0.1rem;
+    border-radius: 0.5rem;
+    text-align: center;
+  }
+}
