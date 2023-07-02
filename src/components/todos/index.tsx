@@ -1,5 +1,8 @@
-import { useEffect, useState, ChangeEvent, FormEvent } from 'react';
-import { supabase } from '../../supabaseClient'
+import { useEffect, useState, ChangeEvent, FormEvent, useCallback } from 'react';
+import { Link } from 'react-router-dom';
+import { Icon } from '@iconify-icon/react';
+
+import { supabase } from '../../supabaseClient';
 
 import Input from '../input';
 import Task from '../task';
@@ -15,31 +18,27 @@ export default function TodosContainer({ userId }: Props) {
   const [errorMsg, setErrorMsg] = useState('');
   const [tasks, setTasks] = useState(['']);
 
-  useEffect(() => {
-    const getTodos = async () => {
-      const { data } = await supabase
-                              .from('Todo')
-                              .select('*')
-                              .eq('user', userId);
-      setTasks(data || []);
-    }
-
-    getTodos();
+  const getTodos = useCallback(async () => {
+    const { data } = await supabase
+                            .from('Todo')
+                            .select('*')
+                            .eq('user', userId);
+    setTasks(data || []);
   }, [userId]);
 
+  useEffect(() => {
+    getTodos();
+  }, [getTodos]);
+
   const addTodo = async () => {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('Todo')
       .insert([
         { title: title, finished: false, user: userId },
       ])
-      .select();
       
       if (!error) {
-        setTasks((prev) => ({
-          ...prev,
-          data,
-        }));
+        getTodos();
       }
   }
   
@@ -52,8 +51,27 @@ export default function TodosContainer({ userId }: Props) {
     }
 
     setErrorMsg('');
+    setTitle('');
     addTodo();
   };
+
+  const handleCheck = async (id: number, finished: boolean) => {
+    await supabase
+      .from('Todo')
+      .update({ 'finished': !finished })
+      .eq('id', id)
+      .select()
+    getTodos();
+  }
+
+  const handleDelete = async (id: number) => {
+    await supabase
+      .from('Todo')
+      .delete()
+      .eq('id', id)
+
+    getTodos();
+  }
 
   const generateElements = () => (
     tasks.map((task, index) => (
@@ -62,6 +80,8 @@ export default function TodosContainer({ userId }: Props) {
         id={ Object(task).id }
         title={ Object(task).title }
         finished={ Object(task).finished }
+        handleCheck={ handleCheck }
+        handleDelete={ handleDelete }
       />
     ))
   )
@@ -93,9 +113,15 @@ export default function TodosContainer({ userId }: Props) {
 
       <hr />
 
-      {
-        !tasks ? <h2>Nenhuma tarefa adicionada</h2> : generateElements()
-      }
+      <div className={ styles.tasks }>
+        {
+          tasks.length === 0 ? <h2>Nenhuma tarefa adicionada</h2> : generateElements()
+        }
+      </div>
+
+      <Link className={ styles.account } to="/account">
+        <Icon icon="fa6-regular:user" />
+      </Link>
     </section>
   )
 }

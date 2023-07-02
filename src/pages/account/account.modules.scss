@@ -1,0 +1,8 @@
+@import '../../assets/colors.scss';
+
+.container {
+  margin: 1rem;
+  padding: 1rem;
+  background-color: $bg-color-s;
+  border: 1px solid $c-primary;
+}

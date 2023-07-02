@@ -4,9 +4,11 @@ type Props = {
   id: number,
   title: string,
   finished: boolean,
+  handleCheck: (id: number, finished: boolean) => void,
+  handleDelete: (id: number) => void,
 }
 
-export default function Task({ id, title, finished }: Props) {
+export default function Task({ id, title, finished, handleCheck, handleDelete }: Props) {
   return (
     <div
       id={ String(id) }
@@ -17,10 +19,16 @@ export default function Task({ id, title, finished }: Props) {
       >
         {title}
       </span>
-      <button>
+      <button
+        className={ styles.check }
+        onClick={ () => handleCheck(id, finished) }
+      >
         C
       </button>
-      <button>
+      <button
+        className={ styles.delete }
+        onClick={ () => handleDelete(id) }
+      >
         D
       </button>
     </div>

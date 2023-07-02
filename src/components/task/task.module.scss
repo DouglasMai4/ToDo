@@ -1,0 +1,41 @@
+@import '../../assets/colors.scss';
+
+.task {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  background-color: $bg-color;
+  border-radius: 0.5rem;
+
+  span {
+    font-size: 2rem;
+    grid-column: 1 / 3;
+    text-align: center;
+
+    &.finished {
+      text-decoration: line-through;
+      text-decoration-color: $c-primary;
+    }
+  }
+
+  button {
+    border: none;
+    cursor: pointer;
+    transition: all 300ms ease;
+
+    &:hover {
+      box-shadow: 0 0 15px rgb(0 0 0 / 50%);
+      z-index: 998;
+    }
+
+    &.check {
+      border-bottom-left-radius: 0.5rem;
+      background-color: $c-secondary;
+    }
+
+    &.delete {
+      border-bottom-right-radius: 0.5rem;
+      background-color: $c-error;
+    }
+  }
+}
