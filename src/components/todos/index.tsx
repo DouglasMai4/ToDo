@@ -1,6 +1,8 @@
 import { useEffect, useState, ChangeEvent, FormEvent } from 'react';
 import { supabase } from '../../supabaseClient'
+
 import Input from '../input';
+import Task from '../task';
 
 import styles from './todos.module.scss';
 
@@ -11,18 +13,19 @@ type Props = {
 export default function TodosContainer({ userId }: Props) {
   const [title, setTitle] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
-
-  const getTodos = async () => {
-    const { data } = await supabase
-                            .from('Todo')
-                            .select('*')
-                            .eq('user', userId);
-    console.log(data);
-  }
+  const [tasks, setTasks] = useState(['']);
 
   useEffect(() => {
+    const getTodos = async () => {
+      const { data } = await supabase
+                              .from('Todo')
+                              .select('*')
+                              .eq('user', userId);
+      setTasks(data || []);
+    }
+
     getTodos();
-  });
+  }, [userId]);
 
   const addTodo = async () => {
     const { data, error } = await supabase
@@ -31,10 +34,13 @@ export default function TodosContainer({ userId }: Props) {
         { title: title, finished: false, user: userId },
       ])
       .select();
-
-      console.log('Data: ', data);
-      console.log('Error: ', error);
       
+      if (!error) {
+        setTasks((prev) => ({
+          ...prev,
+          data,
+        }));
+      }
   }
   
   const handleSubmit = async (e: FormEvent) => {
@@ -46,9 +52,19 @@ export default function TodosContainer({ userId }: Props) {
     }
 
     setErrorMsg('');
-
     addTodo();
   };
+
+  const generateElements = () => (
+    tasks.map((task, index) => (
+      <Task
+        key={ index }
+        id={ Object(task).id }
+        title={ Object(task).title }
+        finished={ Object(task).finished }
+      />
+    ))
+  )
 
   return (
     <section className={ styles.container }>
@@ -67,8 +83,19 @@ export default function TodosContainer({ userId }: Props) {
         {errorMsg && (
           <span className={ styles.errorMsg }>{errorMsg}</span>
         )}
-        <button type="submit">Adicionar</button>
+        <button
+          type="submit"
+          disabled={ title.length === 0 }
+        >
+          Adicionar
+        </button>
       </form>
+
+      <hr />
+
+      {
+        !tasks ? <h2>Nenhuma tarefa adicionada</h2> : generateElements()
+      }
     </section>
   )
 }
