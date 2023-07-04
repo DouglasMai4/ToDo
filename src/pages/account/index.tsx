@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import { supabase } from '../../supabaseClient';
 
@@ -23,16 +24,23 @@ export default function Account() {
     <>
       <section className={ styles.container }>
         <h1>Conta</h1>
-        <div>
+        <div className={ styles.infos }>
           <h2>Informações</h2>
 
           <h3>Nome de Usuário: <span>{username}</span></h3>
           <h3>Email: <span>{email}</span></h3>
         </div>
 
-        <button>
-          Sair
-        </button>
+        <div className={ styles.btnGroup }>
+          <Link className={ styles.return } to="/">
+            Voltar
+          </Link>
+          <button
+            onClick={ async () => await supabase.auth.signOut()}
+          >
+            Sair
+          </button>
+        </div>
       </section>
     </>
   )
